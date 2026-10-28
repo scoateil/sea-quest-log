@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>S.E.A. Quest Log | Travel Portfolio</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Outfit:wght@300;400;600;800;900&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Outfit', sans-serif; background-color: #0b0c10; color: #e0e6ed; }
+    .font-pixel { font-family: 'Press Start 2P', cursive; }
+    .neon-border { box-shadow: 0 0 15px rgba(0, 255, 204, 0.4); border: 2px solid #00ffcc; }
+    .card-hover { transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); }
+    .card-hover:hover { transform: translateY(-8px) scale(1.02); box-shadow: 0 12px 24px rgba(0,255,204,0.3); }
+    ::-webkit-scrollbar { width: 8px; height: 8px; }
+    ::-webkit-scrollbar-track { background: #0f111a; }
+    ::-webkit-scrollbar-thumb { background: #1f293d; border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: #00ffcc; }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between selection:bg-teal-400 selection:text-black">
+
+  <!-- TOP HUD NAVIGATION -->
+  <header class="sticky top-0 z-50 bg-slate-950/90 backdrop-blur-md border-b border-teal-500/30 px-4 py-3 flex items-center justify-between">
+    <div class="flex items-center space-x-3">
+      <span class="text-2xl animate-pulse">🎮</span>
+      <h1 class="font-pixel text-xs sm:text-sm text-teal-400 tracking-wider">SEA_QUEST_LOG</h1>
+    </div>
+
+    <div class="flex items-center space-x-3 text-xs">
+      <button onclick="toggleActMenu()" class="bg-teal-950 border border-teal-500/50 text-teal-300 px-3 py-1.5 rounded-lg hover:bg-teal-900 transition flex items-center space-x-1">
+        <span>🗺️ ACT SELECTOR</span>
+      </button>
+
+      <button onclick="openDriveModal()" class="bg-purple-950 border border-purple-500/50 text-purple-300 px-3 py-1.5 rounded-lg hover:bg-purple-900 transition flex items-center space-x-1">
+        <span>📁 FULL PHOTO DUMP</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- ACT SELECTOR OVERLAY -->
+  <div id="actModal" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4">
+    <div class="bg-slate-900 border-2 border-teal-400 rounded-2xl p-6 max-w-xl w-full text-center">
+      <h2 class="font-pixel text-teal-400 text-lg mb-2">CHOOSE YOUR ACT</h2>
+      <p class="text-slate-400 text-xs mb-6">Select a stage to load regional quest archives & photo logs.</p>
+      
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <!-- ACT I: SINGAPORE -->
+        <button onclick="selectAct('singapore1')" class="bg-slate-800 hover:bg-teal-950 border border-teal-500/40 p-4 rounded-xl text-left transition group">
+          <div class="text-2xl mb-1">🇸🇬</div>
+          <div class="font-bold text-teal-300 text-sm group-hover:text-teal-200">ACT I</div>
+          <div class="text-xs text-slate-400">Singapore</div>
+          <div class="text-[10px] text-teal-500 mt-2">Sept 12–16</div>
+        </button>
+
+        <!-- ACT II: MALAYSIA -->
+        <button onclick="selectAct('malaysia')" class="bg-slate-800 hover:bg-amber-950 border border-amber-500/40 p-4 rounded-xl text-left transition group">
+          <div class="text-2xl mb-1">🇲🇾</div>
+          <div class="font-bold text-amber-300 text-sm group-hover:text-amber-200">ACT II</div>
+          <div class="text-xs text-slate-400">Malaysia</div>
+          <div class="text-[10px] text-amber-500 mt-2">Sept 17–25</div>
+        </button>
+
+        <!-- ACT III: THAILAND -->
+        <button onclick="selectAct('thailand')" class="bg-slate-800 hover:bg-emerald-950 border border-emerald-500/40 p-4 rounded-xl text-left transition group">
+          <div class="text-2xl mb-1">🇹🇭</div>
+          <div class="font-bold text-emerald-300 text-sm group-hover:text-emerald-200">ACT III</div>
+          <div class="text-xs text-slate-400">Thailand</div>
+          <div class="text-[10px] text-emerald-500 mt-2">Sept 26–30</div>
+        </button>
+      </div>
+
+      <button onclick="toggleActMenu()" class="mt-6 text-xs text-slate-500 hover:text-slate-300">Close Menu</button>
+    </div>
+  </div>
+
+  <!-- DRIVE MODAL -->
+  <div id="driveModal" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4">
+    <div class="bg-slate-900 border-2 border-purple-500 rounded-2xl p-6 max-w-md w-full text-center">
+      <h2 class="font-pixel text-purple-400 text-sm mb-2">📁 FULL PHOTO ALBUM LINK</h2>
+      <p class="text-slate-400 text-xs mb-4">Paste your shareable Google Drive or Google Photos link here:</p>
+
+      <input id="driveInput" type="text" placeholder="https://photos.app.goo.gl/..." class="w-full bg-slate-950 border border-slate-700 text-slate-200 text-xs px-3 py-2 rounded-lg mb-4 focus:outline-none focus:border-purple-400">
+
+      <div class="flex justify-end space-x-2">
+        <button onclick="saveDriveLink()" class="bg-purple-600 hover:bg-purple-500 text-white px-4 py-2 rounded-lg text-xs font-bold transition">Save & Launch</button>
+        <button onclick="closeDriveModal()" class="bg-slate-800 text-slate-400 px-4 py-2 rounded-lg text-xs hover:bg-slate-700">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MAIN DASHBOARD CONTENT -->
+  <main class="max-w-6xl mx-auto px-4 py-8 flex-grow w-full">
+
+    <!-- HERO ACT BANNER -->
+    <div id="heroBanner" class="relative rounded-3xl overflow-hidden bg-slate-900 border border-teal-500/30 p-6 sm:p-10 mb-8 shadow-2xl">
+      <div class="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-6">
+        <div>
+          <span id="actTag" class="px-3 py-1 rounded-full bg-teal-950 text-teal-400 text-xs font-bold border border-teal-500/40">CURRENT STAGE: ACT I</span>
+          <h2 id="actTitle" class="text-3xl sm:text-5xl font-black text-white mt-3">Singapore Arrival</h2>
+          <p id="actDesc" class="text-slate-400 text-sm sm:text-base mt-2 max-w-xl">Exploring Jewel Changi, Marina Bay Sands, Gardens by the Bay, and local hawker feasts.</p>
+        </div>
+
+        <div class="flex flex-col sm:flex-row gap-3">
+          <button onclick="triggerDropZone()" class="bg-teal-400 hover:bg-teal-300 text-slate-950 px-6 py-3 rounded-xl font-bold text-sm transition shadow-lg shadow-teal-500/20">
+            ➕ Add Local Photos
+          </button>
+          <button onclick="openDriveModal()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 px-6 py-3 rounded-xl font-bold text-sm transition border border-slate-700">
+            📁 Full Album
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- DROP ZONE / LOCAL MEDIA LOCKER -->
+    <section class="mb-10">
+      <h3 class="font-pixel text-xs text-teal-400 mb-3 tracking-widest">MEDIA LOCKER & DROP ZONE</h3>
+      <div id="dropZone" class="border-2 border-dashed border-teal-500/40 hover:border-teal-400 rounded-2xl bg-slate-900/50 p-8 text-center cursor-pointer transition">
+        <div class="text-4xl mb-2">📸</div>
+        <p class="text-sm text-slate-300 font-semibold">Drag & Drop your photos here</p>
+        <p class="text-xs text-slate-500 mt-1">Or click to select files from your computer</p>
+        <input type="file" id="fileInput" multiple accept="image/*" class="hidden" onchange="handleFiles(this.files)">
+      </div>
+    </section>
+
+    <!-- LIVE PHOTO GALLERY GRID -->
+    <section>
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="font-pixel text-xs text-teal-400 tracking-widest">STAGE GALLERY</h3>
+        <span id="photoCount" class="text-xs text-slate-500">0 Photos Uploaded</span>
+      </div>
+
+      <div id="galleryGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+        <!-- Dynamic photo cards appear here -->
+        <div class="bg-slate-900 border border-slate-800 rounded-xl p-8 text-center text-slate-600 col-span-full">
+          No photos added yet for this Act. Drag and drop pictures above or use the Full Album link!
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="border-t border-slate-900 bg-slate-950 py-6 text-center text-xs text-slate-600">
+    <p>S.E.A. Backpacking & Vlogging Quest Log • Singapore • Malaysia • Thailand</p>
+  </footer>
+
+  <script>
+    let activeAct = 'singapore1';
+    let storedPhotos = { singapore1: [], malaysia: [], thailand: [] };
+    let driveLink = localStorage.getItem('sea_quest_drive_link') || '';
+
+    const actDetails = {
+      singapore1: { tag: 'CURRENT STAGE: ACT I', title: 'Singapore Arrival', desc: 'Exploring Jewel Changi, Marina Bay Sands, Gardens by the Bay, and local hawker feasts.' },
+      malaysia: { tag: 'CURRENT STAGE: ACT II', title: 'Malaysia Adventure', desc: 'Conquering Kuala Lumpur Petronas Towers, Batu Caves, and Penang street food.' },
+      thailand: { tag: 'CURRENT STAGE: ACT III', title: 'Thailand Expedition', desc: 'Exploring bustling night markets, ancient temples, legendary street food, and island vibes.' }
+    };
+
+    function toggleActMenu() {
+      document.getElementById('actModal').classList.toggle('hidden');
+    }
+
+    function selectAct(act) {
+      activeAct = act;
+      const info = actDetails[act];
+      document.getElementById('actTag').innerText = info.tag;
+      document.getElementById('actTitle').innerText = info.title;
+      document.getElementById('actDesc').innerText = info.desc;
+      toggleActMenu();
+      renderGallery();
+    }
+
+    function openDriveModal() {
+      if (driveLink) {
+        window.open(driveLink, '_blank');
+      } else {
+        document.getElementById('driveModal').classList.remove('hidden');
+      }
+    }
+
+    function closeDriveModal() {
+      document.getElementById('driveModal').classList.add('hidden');
+    }
+
+    function saveDriveLink() {
+      const input = document.getElementById('driveInput').value.trim();
+      if (input) {
+        driveLink = input;
+        localStorage.setItem('sea_quest_drive_link', input);
+        closeDriveModal();
+        window.open(driveLink, '_blank');
+      }
+    }
+
+    function triggerDropZone() {
+      document.getElementById('fileInput').click();
+    }
+
+    const dropZone = document.getElementById('dropZone');
+    dropZone.addEventListener('click', triggerDropZone);
+    dropZone.addEventListener('dragover', (e) => e.preventDefault());
+    dropZone.addEventListener('drop', (e) => {
+      e.preventDefault();
+      handleFiles(e.dataTransfer.files);
+    });
+
+    function handleFiles(files) {
+      for (let file of files) {
+        if (file.type.startsWith('image/')) {
+          const url = URL.createObjectURL(file);
+          storedPhotos[activeAct].push(url);
+        }
+      }
+      renderGallery();
+    }
+
+    function renderGallery() {
+      const grid = document.getElementById('galleryGrid');
+      const photos = storedPhotos[activeAct];
+      document.getElementById('photoCount').innerText = `${photos.length} Photos Uploaded`;
+
+      if (photos.length === 0) {
+        grid.innerHTML = `<div class="bg-slate-900 border border-slate-800 rounded-xl p-8 text-center text-slate-600 col-span-full">No photos added yet for this Act. Drag and drop pictures above!</div>`;
+        return;
+      }
+
+      grid.innerHTML = photos.map(url => `
+        <div class="relative group aspect-square rounded-xl overflow-hidden bg-slate-900 border border-slate-800">
+          <img src="${url}" class="w-full h-full object-cover transition transform duration-300 group-hover:scale-105">
+        </div>
+      `).join('');
+    }
+  </script>
+</body>
+</html>
